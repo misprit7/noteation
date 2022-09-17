@@ -8,8 +8,19 @@ import logo from './assets/logo.png';
 import background from './assets/background.png';
 import styled from 'styled-components/macro';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
+import { useHistory } from "react-router-dom";
 
-export function StartPage() {
+
+export function StartPage(props) {
+
+  const history = useHistory()
+
+  const onFileUpload = (e: React.FormEvent<HTMLInputElement>) => {
+    props.history.push("/reader")
+    if(e?.currentTarget?.files != null)
+      props.onScoreChange(e.currentTarget.files[0])
+  }
+
   return (
     <Bg>
       <Helmet>
@@ -17,7 +28,15 @@ export function StartPage() {
       </Helmet>
       <Stack justifyContent="center" alignItems="center" spacing={10}>
         <Img src={logo}/>
-        <Button variant="contained" style={{minWidth: 100}}><AudioFileIcon/></Button>
+        <Button variant="contained" component="label" style={{minWidth: 100}}>
+          <AudioFileIcon/>
+          <input
+            type="file"
+            accept="application/pdf"
+            hidden
+            onChange={onFileUpload}
+          />
+        </Button>
       </Stack>
     </Bg>
   );
