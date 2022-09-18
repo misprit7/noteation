@@ -1,5 +1,6 @@
 import psycopg2
 
+
 class Database(): 
     
     def __init__(self, username: str, host: str, password: str, cluster_name: str): 
@@ -21,9 +22,10 @@ class Database():
         try: 
             with self.connection.cursor() as cursor: 
                 cursor.execute(statement)
-                data = cursor.fetchone()
                 self.connection.commit()
-                return data
-        except psycopg2.ProgrammingError: 
+                return cursor.fetchall()
+        except psycopg2.ProgrammingError as e: 
+            print(e)
             return 
+    
                     

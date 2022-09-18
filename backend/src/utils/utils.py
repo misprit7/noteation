@@ -1,9 +1,20 @@
-import cv2 as cv
+from typing import List
+import time
+from backend.src.classes.Database import Database
+from backend.src.classes.Event import Event
 
 
-def edge_detection(img):
-    img_blur = cv.GaussianBlur(img, (3,3), SigmaX=0, SigmaY=0)
-    edges = cv.Canny(image=img_blur, threshold1=100, threshold2=200)
-    return edges
 
+def log_event(db: Database, event: Event):
+    db.connect() 
+    statement = f"INSERT INTO {db.cluster_name} ({', '.join(event.get_properties())}) VALUES {tuple(event.get_values())};"
+    db.execute(statement=statement)    
+    db.disconnect()
 
+def create_table(db: Database): 
+    db.connect()
+    statement = "CREATE TABLE IF NOT EXISTS events (timestamp VARCHAR(255) PRIMARY KEY, event_type VARCHAR(225));"
+    db.execute(statement)
+    db.disconnect()
+
+    
