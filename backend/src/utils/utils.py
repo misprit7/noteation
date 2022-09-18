@@ -4,7 +4,6 @@ from backend.src.classes.Database import Database
 from backend.src.classes.Event import Event
 
 
-
 def log_event(db: Database, event: Event):
     db.connect() 
     statement = f"INSERT INTO {db.cluster_name} ({', '.join(event.get_properties())}) VALUES {tuple(event.get_values())};"
