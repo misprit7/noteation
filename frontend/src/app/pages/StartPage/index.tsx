@@ -30,9 +30,14 @@ export function StartPage(props) {
       redirect: 'follow'
     };
     
-    fetch(API_URL + `/events/${prevTimestamp}`, requestOptions)
-      .then(response => response.text())
-      .then(result => console.log(result))
+    return fetch(API_URL + `/events/${prevTimestamp}`, requestOptions)
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        let events: Array<string> = json["events"];
+        return events
+      })
       .catch(error => console.log('error', error));
   }
 
