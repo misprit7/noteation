@@ -8,10 +8,22 @@ import aruco2 from './assets/4x4_1000-2.svg';
 import aruco3 from './assets/4x4_1000-3.svg';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import {useHistory} from 'react-router-dom';
 
 export function ReaderPage(props) {
 
+  const history = useHistory()
   const [page, setPage] = React.useState(1);
+  const [prevTimestamp, setPrevTimestamp] = React.useState(0);
+
+  React.useEffect(() => {
+    let interval
+    interval = setInterval(() => {
+      console.log("hello 1Hz")
+    }, 100)
+
+    return () => clearInterval(interval)
+  })
 
   const onLeft = () => {
     if(page > 1) setPage(page-1)
@@ -22,6 +34,29 @@ export function ReaderPage(props) {
   }
 
   console.log(props.score)
+  if(props.score == null){
+    history.push("/reader")
+  }
+
+  const makeQuery = () => {
+    const API_URL: string = "https://283d-2620-101-f000-704-00-f5.ngrok.io";
+    var requestOptions: RequestInit = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    return fetch(API_URL + `/events/${prevTimestamp}`, requestOptions)
+      .then(response => {
+        return response.json();
+      })
+      .then(json => {
+        let events: Array<string> = json["events"];
+        return events
+      })
+      .catch(error => console.log('error', error));
+  }
+
+  console.log(makeQuery());
 
   return (
     <>
