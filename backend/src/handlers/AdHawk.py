@@ -1,5 +1,5 @@
 import sys
-#sys.path.append('../')
+sys.path.append('../')
 import adhawkapi
 import adhawkapi.frontend
 from adhawkapi import Events, MarkerSequenceMode, PacketType
@@ -165,9 +165,9 @@ class AdHawkHandler:
             print(str(_timestamp) + str(_args))
 
             if _args[0] == 0:
-                event = Event({"timestamp": time.time(), "command": "forward"})
+                event = Event({"timestamp": time.time(), "command": "right"})
             else:
-                event = Event({"timestamp": time.time(), "command": "backward"})
+                event = Event({"timestamp": time.time(), "command": "left"})
 
             utils.log_event(self.Database, event)
 
