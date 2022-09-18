@@ -25,3 +25,5 @@ template
 
 # backend
 venv
+__pychache__/
+

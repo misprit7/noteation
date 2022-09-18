@@ -18,7 +18,7 @@ export function ReaderPage(props) {
   var prevTimestamp = [0]
 
   const makeQuery = (pt) => {
-    const API_URL: string = "http://1ec8-2620-101-f000-704-8000-00-eaa.ngrok.io";
+    const API_URL: string = "http://127.0.0.1:5000";
     var requestOptions: RequestInit = {
       method: 'GET',
       redirect: 'follow'
