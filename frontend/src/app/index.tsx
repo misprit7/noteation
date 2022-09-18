@@ -32,11 +32,12 @@ const theme = createTheme({
 export function App() {
   const { i18n } = useTranslation();
   
-  const [score, setScore] = React.useState(null)
+  const [score, setScore] = React.useState<File|null>(null)
 
-  // const onScoreChange = (score: File) => {
-  //   setScore(score)
-  // }
+  const onScoreChange = (score: File) => {
+    setScore(score)
+    console.log(score.name)
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -51,8 +52,8 @@ export function App() {
           </Helmet>
 
           <Switch>
-            <Route exact path={process.env.PUBLIC_URL + '/'} component={withRouter(StartPage)} />
-            <Route path={process.env.PUBLIC_URL + '/reader'} component={withRouter(ReaderPage)} />
+            <Route exact path={process.env.PUBLIC_URL + '/'} render={(props) => <StartPage onScoreChange={onScoreChange}/>} />
+            <Route path={process.env.PUBLIC_URL + '/reader'} render={(props) => <ReaderPage score={score}/>} />
           </Switch>
           <GlobalStyle />
         </React.StrictMode>

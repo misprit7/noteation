@@ -16,7 +16,7 @@ export function StartPage(props) {
   const history = useHistory()
 
   const onFileUpload = (e: React.FormEvent<HTMLInputElement>) => {
-    props.history.push("/reader")
+    history.push("/reader")
     if(e?.currentTarget?.files != null)
       props.onScoreChange(e.currentTarget.files[0])
   }
