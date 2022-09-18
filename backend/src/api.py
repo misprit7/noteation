@@ -17,7 +17,7 @@ db = Database(username=os.environ.get("DATABASE_USERNAME"),
 
 @app.route('/events/<int:timestamp>')
 def get_events(timestamp: int):
-    query = f"SELECT * FROM events WHERE CAST(events.timestamp AS int) > {timestamp}"
+    query = f"SELECT * FROM events WHERE CAST(events.timestamp AS int) > {timestamp} ORDER BY CAST(events.timestamp AS int) ASC"
     db.connect()
     events = {"events": db.execute(statement=query)}
     print(events)
