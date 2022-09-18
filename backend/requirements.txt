@@ -1,0 +1,5 @@
+adhawk==5.10.1rc2
+numpy==1.23.3
+opencv-python==4.6.0.66
+psycopg2-binary==2.9.3
+python-dotenv==0.21.0
