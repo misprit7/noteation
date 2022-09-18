@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import PdfViewerComponent from 'app/components/PdfViewerComponent';
 import {Grid, Stack} from '@mui/material';
 
 export function ReaderPage(props) {
