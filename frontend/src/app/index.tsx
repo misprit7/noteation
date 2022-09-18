@@ -8,31 +8,56 @@
 
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import { Switch, Route, BrowserRouter, withRouter } from 'react-router-dom';
 
 import { GlobalStyle } from '../styles/global-styles';
 
-import { HomePage } from './pages/HomePage/Loadable';
-import { NotFoundPage } from './pages/NotFoundPage/Loadable';
+import { ReaderPage } from './pages/ReaderPage/Loadable';
+import { StartPage } from './pages/StartPage/Loadable';
 import { useTranslation } from 'react-i18next';
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      light: '#8e8e8e',
+      main: '#616161',
+      dark: '#373737',
+      contrastText: '#fff',
+    }
+  }
+});
 
 export function App() {
   const { i18n } = useTranslation();
-  return (
-    <BrowserRouter>
-      <Helmet
-        titleTemplate="%s - React Boilerplate"
-        defaultTitle="React Boilerplate"
-        htmlAttributes={{ lang: i18n.language }}
-      >
-        <meta name="description" content="A React Boilerplate application" />
-      </Helmet>
+  
+  const [score, setScore] = React.useState<File|null>(null)
 
-      <Switch>
-        <Route exact path={process.env.PUBLIC_URL + '/'} component={HomePage} />
-        <Route component={NotFoundPage} />
-      </Switch>
-      <GlobalStyle />
-    </BrowserRouter>
+  const onScoreChange = (score: File) => {
+    setScore(score)
+    console.log(score.name)
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <React.StrictMode>
+          <Helmet
+            titleTemplate="%s - Noteation"
+            defaultTitle="Noteation"
+            htmlAttributes={{ lang: i18n.language }}
+          >
+            <meta name="description" content="Noteation" />
+          </Helmet>
+
+          <Switch>
+            <Route exact path={process.env.PUBLIC_URL + '/'} render={(props) => <StartPage onScoreChange={onScoreChange}/>} />
+            <Route path={process.env.PUBLIC_URL + '/reader'} render={(props) => <ReaderPage score={score}/>} />
+          </Switch>
+          <GlobalStyle />
+        </React.StrictMode>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }

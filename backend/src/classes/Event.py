@@ -12,4 +12,4 @@ class Event():
     def get_values(self) -> List[str]: 
         return [str(val) for prop, val in self.event]
         
-    
+        
