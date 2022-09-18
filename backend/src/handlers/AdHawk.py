@@ -9,22 +9,36 @@ from src.classes.Event import Event
 #from src.classes.Database import Database
 from src.utils import utils
 import numpy as np
+from sklearn.metrics import r2_score
 import cv2
 
 class GazeBuffer:
-    MAX_SIZE = 87
+    MAX_SIZE = 100
+
     def __init__(self):
         self.buffer = []
+        self.result  = 1
     
     def append(self, array):
         if len(self.buffer) < 20:
             self.buffer.append(array)
         else:
-            self.buffer.pop(0)
+            model = np.polyfit([row[1] for row in self.buffer], [row[2] for row in self.buffer], 1)
+            g = model[0]
+            predict = np.poly1d(model)
+            r2 = r2_score([row[2] for row in self.buffer], predict([row[1] for row in self.buffer]))
+            print("g: ", g, ", r: ", r2)
+            if r2> 0.6 and g<-2:
+                self.result = -1
+                
+            self.buffer = []
             self.buffer.append(array)
 
     def getBuffer(self):
         return self.buffer
+
+    def getGradient(self):
+        return self.result
     
     def getCoordsForTimeStamp(self, timestamp):
         timestamps = [row[0] for row in self.buffer]
@@ -66,6 +80,7 @@ class AdHawkHandler:
         self.MARKER_DIC = cv2.aruco.DICT_4X4_50
         self._marker_ids = [0,1,2,3]
         self.BUFFER = GazeBuffer()
+        self.already_negative = False
         
         # Instantiate an API object
         self._api = adhawkapi.frontend.FrontendApi()
@@ -141,33 +156,42 @@ class AdHawkHandler:
 
     def _handle_gaze_in_screen(self, _timestamp, xpos, ypos):
         self.BUFFER.append([_timestamp, xpos, ypos])
-        print([_timestamp, xpos, ypos])
+        print("x: ", xpos, ", y: ", ypos)
+        g = self.BUFFER.getGradient()
+        if g < -2:
+            event = Event({"timestamp": int(time.time_ns())//1000, "event_type": "right"})
+            utils.log_event(self.Database, event)
+            print("flip!" + str(g))
+
+        #print([_timestamp, xpos, ypos])
     
     def _handle_event_stream(self, event_type, _timestamp, *_args):
         ''' Handler for the event stream '''
         #TODO: decide how to handle this since we want events to be handled to 
         #change the DB value. easy option: no calibration so no renabling needed
 
-        # if event_type == Events.SACCADE:
+        #if event_type == Events.SACCADE:
         #     print('saccade' + str(_timestamp) + str(_args[0]))
         #     print(_args)
         #     print('before' + str(self.BUFFER.getCoordsForTimeStamp(_timestamp)[1]))
         #     print('after' + str(self.BUFFER.getCoordsForTimeStamp(_timestamp)[0]))
 
-        #     before = self.BUFFER.getCoordsForTimeStamp(_timestamp)[1]
-        #     after = self.BUFFER.getCoordsForTimeStamp(_timestamp)[0]
-        #     fancy_ML_regression_fitting_magic = (after[1]-before[1]) - (after[0] - before[0])
-        #     print("g = " + str(fancy_ML_regression_fitting_magic))
+        #    before = self.BUFFER.getCoordsForTimeStamp(_timestamp)[1]
+        #    after = self.BUFFER.getCoordsForTimeStamp(_timestamp)[0]
+        #    fancy_ML_regression_fitting_magic = (after[1]-before[1]) - (after[0] - before[0])
+        #    print("g = " + str(fancy_ML_regression_fitting_magic))
         #     if fancy_ML_regression_fitting_magic < 0:
         #         print("TURN!!")
 
-        if event_type == Events.TRACKLOSS_END:
-            print(str(_timestamp) + str(_args))
+        if event_type == Events.TRACKLOSS_START:
+            #print(str(_timestamp) + str(_args))
 
             if _args[0] == 0:
-                event = Event({"timestamp": time.time(), "command": "right"})
+                event = Event({"timestamp": int(time.time_ns())//1000, "event_type": "right"})
+                print("right wink")
             else:
-                event = Event({"timestamp": time.time(), "command": "left"})
+                event = Event({"timestamp": int(time.time_ns())//1000, "event_type": "left"})
+                print("left wink")
 
             utils.log_event(self.Database, event)
 
@@ -206,7 +230,7 @@ class AdHawkHandler:
             print('Connected to AdHawk Backend Service')
 
             # Sets the GAZE data stream rate to 125Hz
-            self._api.set_stream_control(PacketType.GAZE_IN_SCREEN, 125, callback=(lambda *_args: None))
+            self._api.set_stream_control(PacketType.GAZE_IN_SCREEN, 200, callback=(lambda *_args: None))
 
             # Tells the api which event streams we want to tap into. In this case, we wish to tap into the BLINK and
             # SACCADE data streams.
@@ -235,6 +259,8 @@ class AdHawkHandler:
         if not error:
             print('ArUco markers registered')
             self.enable_screen_tracking(True)
+
+            self.quickstart()
 
 
 
