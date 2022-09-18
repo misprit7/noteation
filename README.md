@@ -48,11 +48,24 @@ Then head to http://localhost:3000 on a browser to see the frontend!
 
 To create a virtual environment and install dependencies, run:
 ```sh
-python3 -m venv venv
-source venv/bin/activate # Unix-like systems
-source venv/Scripts/activate # Windows
-pip install -r requirements.txt
+$ python3 -m venv venv
+$ source venv/bin/activate # Unix-like systems
+$ source venv/Scripts/activate # Windows
+$ pip install -r requirements.txt
 ```
+
+Once you have tehse dependencies set up, you can  run the backend. To run the flask application that interfaces with our CockroachDB database:
+
+```sh
+$ python -m flask run
+```
+
+The part of our project that actually interfaces with the AdHawk SDK is in `backend/src/main.py`. To run, you must first install the AdHawk vision SDK, which is outside the scope of this readme but see [here](https://www.adhawkmicrosystems.com/api_doc) for documentation. Once that is running, simply call 
+
+```sh
+$ python ./main.py
+```
+And events will start being streamed to the CockroachDB database. 
 
 # Contributors
 Built by [Xander Naumenko](https://www.linkedin.com/in/xander-naumenko/), [Renu Rajamagesh](https://www.linkedin.com/in/renu-rajamagesh/), and [Prayus Shrestha](https://www.linkedin.com/in/prayus-shrestha/). 
