@@ -14,13 +14,43 @@ export function ReaderPage(props) {
 
   const history = useHistory()
   const [page, setPage] = React.useState(1);
-  const [prevTimestamp, setPrevTimestamp] = React.useState(0);
+
+  var prevTimestamp = [0]
+
+  const makeQuery = (pt) => {
+    const API_URL: string = "http://1ec8-2620-101-f000-704-8000-00-eaa.ngrok.io";
+    var requestOptions: RequestInit = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    let ret = fetch(API_URL + `/events/${prevTimestamp}`, requestOptions)
+      .then((response) => {
+        return response.json();
+      })
+      .then((json) => {
+        let events: Array<string> = json["events"];
+        for(let e of events){
+          if(e[0] > pt[0]){
+            if(e[1] == "left") onLeft()
+            if(e[1] == "right") onRight()
+          }
+          console.log(e[1])
+        }
+        pt[0] = events.length == 0 ? pt[0] : events[events.length-1][0]
+        console.log(prevTimestamp)
+        return events
+      })
+    // return ret
+  }
+
 
   React.useEffect(() => {
     let interval
     interval = setInterval(() => {
-      console.log("hello 1Hz")
-    }, 100)
+      makeQuery(prevTimestamp)
+
+    }, 1000)
 
     return () => clearInterval(interval)
   })
@@ -38,25 +68,6 @@ export function ReaderPage(props) {
     history.push("/reader")
   }
 
-  const makeQuery = () => {
-    const API_URL: string = "https://283d-2620-101-f000-704-00-f5.ngrok.io";
-    var requestOptions: RequestInit = {
-      method: 'GET',
-      redirect: 'follow'
-    };
-    
-    return fetch(API_URL + `/events/${prevTimestamp}`, requestOptions)
-      .then(response => {
-        return response.json();
-      })
-      .then(json => {
-        let events: Array<string> = json["events"];
-        return events
-      })
-      .catch(error => console.log('error', error));
-  }
-
-  console.log(makeQuery());
 
   return (
     <>
