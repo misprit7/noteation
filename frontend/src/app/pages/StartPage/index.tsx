@@ -9,17 +9,34 @@ import background from './assets/background.png';
 import styled from 'styled-components/macro';
 import AudioFileIcon from '@mui/icons-material/AudioFile';
 import { useHistory } from "react-router-dom";
+import { useState } from 'react';
 
 
 export function StartPage(props) {
 
   const history = useHistory()
+  const [prevTimestamp, setPrevTimestamp] = useState(0);
 
   const onFileUpload = (e: React.FormEvent<HTMLInputElement>) => {
     history.push("/reader")
     if(e?.currentTarget?.files != null)
       props.onScoreChange(e.currentTarget.files[0])
   }
+
+  const makeQuery = () => {
+    const API_URL: string = "https://283d-2620-101-f000-704-00-f5.ngrok.io";
+    var requestOptions: RequestInit = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    fetch(API_URL + `/events/${prevTimestamp}`, requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+  }
+
+  console.log(makeQuery());
 
   return (
     <Bg>
