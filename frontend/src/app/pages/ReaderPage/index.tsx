@@ -1,17 +1,64 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet-async';
-import {Grid, Stack} from '@mui/material';
+import { Stack, Button, Divider} from '@mui/material';
+import styled from 'styled-components/macro';
+import aruco0 from './assets/4x4_1000-0.svg';
+import aruco1 from './assets/4x4_1000-1.svg';
+import aruco2 from './assets/4x4_1000-2.svg';
+import aruco3 from './assets/4x4_1000-3.svg';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 export function ReaderPage(props) {
+
+  const [page, setPage] = React.useState(1);
+
+  const onLeft = () => {
+    if(page > 1) setPage(page-1)
+  }
+
+  const onRight = () => {
+    setPage(page+1)
+  }
+
+  console.log(props.score)
 
   return (
     <>
       <Helmet>
         <title>{props.score?.name}</title>
       </Helmet>
-      <Stack justifyContent="center" alignItems="center">
-          <iframe src="Prelude-Renu.pdf#page=2&zoom=page-width" style={{height: '100vh', width: '73vh'}}/>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack 
+          direction="column"
+          justifyContent="space-between"
+          alignItems="flex-start"
+          style={{height: '100vh', width: '200px'}}
+          // divider={<Divider flexItem variant="middle"/>}
+        >
+          <Img src={aruco0}/>
+          <Button style={{minHeight: '50vh', minWidth: '100%'}} onClick={onLeft}><ChevronLeftIcon fontSize="large"/></Button>
+          <Img src={aruco2}/>
+        </Stack>
+        {/* <iframe src={"Prelude-Renu.pdf#page=" + page + "&zoom=page-width"} style={{height: '100vh', width: '73vh'}}/> */}
+        <iframe src={URL.createObjectURL(props.score)} style={{height: '100vh', width: '73vh'}}/>
+        <Stack 
+          direction="column"
+          justifyContent="space-between"
+          alignItems="flex-end"
+          style={{height: '100vh', width: '200px'}}
+          // divider={<Divider flexItem variant="middle"/>}
+        >
+          <Img src={aruco1}/>
+          <Button style={{minHeight: '50vh', minWidth: '100%'}} onClick={onRight}><ChevronRightIcon fontSize="large"/></Button>
+          <Img src={aruco2}/>
+        </Stack>
       </Stack>
     </>
   );
 }
+
+const Img = styled.img`
+  margin: 10mm
+`
+
