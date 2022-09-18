@@ -11,6 +11,18 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 export function ReaderPage(props) {
 
+  const [page, setPage] = React.useState(1);
+
+  const onLeft = () => {
+    if(page > 1) setPage(page-1)
+  }
+
+  const onRight = () => {
+    setPage(page+1)
+  }
+
+  console.log(props.score)
+
   return (
     <>
       <Helmet>
@@ -25,13 +37,21 @@ export function ReaderPage(props) {
           // divider={<Divider flexItem variant="middle"/>}
         >
           <Img src={aruco0}/>
-          <Button style={{minHeight: '50vh', minWidth: '100%'}}><ChevronLeftIcon/></Button>
+          <Button style={{minHeight: '50vh', minWidth: '100%'}} onClick={onLeft}><ChevronLeftIcon fontSize="large"/></Button>
           <Img src={aruco2}/>
         </Stack>
-        <iframe src="Prelude-Renu.pdf#page=2&zoom=page-width" style={{height: '100vh', width: '73vh'}}/>
-        <Stack direction="column" justifyContent="space-between" style={{height: '100vh'}}>
+        {/* <iframe src={"Prelude-Renu.pdf#page=" + page + "&zoom=page-width"} style={{height: '100vh', width: '73vh'}}/> */}
+        <iframe src={URL.createObjectURL(props.score)} style={{height: '100vh', width: '73vh'}}/>
+        <Stack 
+          direction="column"
+          justifyContent="space-between"
+          alignItems="flex-end"
+          style={{height: '100vh', width: '200px'}}
+          // divider={<Divider flexItem variant="middle"/>}
+        >
           <Img src={aruco1}/>
-          <Img src={aruco3}/>
+          <Button style={{minHeight: '50vh', minWidth: '100%'}} onClick={onRight}><ChevronRightIcon fontSize="large"/></Button>
+          <Img src={aruco2}/>
         </Stack>
       </Stack>
     </>
