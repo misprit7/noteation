@@ -1,5 +1,4 @@
 from typing import List
-import time
 import sys
 sys.path.append('../../')
 from backend.src.classes.Database import Database

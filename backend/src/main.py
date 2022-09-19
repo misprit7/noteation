@@ -11,8 +11,6 @@ def main():
     handler = AdHawkHandler(database)
     handler.quickstart()
 
-    pass
-
 
 if __name__ == '__main__':
     main()
