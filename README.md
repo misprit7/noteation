@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
- Built for Hack the North 2022 - finished as finalists!
+ Built for Hack the North 2022 and finished as finalists!
 </p>
 
 # Technologies: 
